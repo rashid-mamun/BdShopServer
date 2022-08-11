@@ -41,23 +41,36 @@ router.post('/', async (req, res) => {
     });
 
 });
+// router.get("/:id", async (req, res) => {
+//     await Service.find({ _id: req.params.id })
+//         .select({
+//             __v: 0
+//         })
+//         .exec((err, data) => {
+//             if (err) {
+//                 res.status(500).json({
+//                     error: "There was a server side error!",
+//                 });
+//             } else {
+//                 res.status(200).json(
+//                     data
+//                 );
+//             }
+//         });
+// });
+
 router.get("/:id", async (req, res) => {
-    await Service.find({ _id: req.params.id })
-        .select({
-            __v: 0
-        })
-        .exec((err, data) => {
-            if (err) {
-                res.status(500).json({
-                    error: "There was a server side error!",
-                });
-            } else {
-                res.status(200).json(
-                    data
-                );
-            }
+    try {
+        const data = await Service.find({ _id: req.params.id });
+        res.status(200).json(data);
+    } catch (err) {
+        res.status(500).json({
+            error: `There was a server side error! ${err}`,
         });
+    }
 });
+
+
 router.delete("/:id", async (req, res) => {
     await Service.deleteOne({ _id: req.params.id })
         .select({
