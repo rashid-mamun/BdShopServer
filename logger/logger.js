@@ -1,37 +1,26 @@
+const { createLogger, format, transports } = require("winston");
 
-const winston = require('winston');
-const expressWinston = require('express-winston');
-const winstonFile = require('winston-daily-rotate-file');
-
-/// custom middleware
-const processRequest = async (req, res, next) => {
-
-    let correlationId = req.headers['x-correlation-id'];
-    if (!correlationId) {
-        correlationId = Date.now().toString();
-        req.headers['x-correlation-id'] = correlationId;
-    }
-    res.set('x-correlation-id', correlationId);
-    return next();
-}
-const getMessage = (req, res) => {
-    let obj = {
-        correlationId: req.headers['x-correlation-id'],
-        requestBody: req.body
-    };
-
-    return JSON.stringify(obj);
-}
-
-const infoLogger = winston.createLogger({
+const logger = createLogger({
     transports: [
-        new winston.transports.Console()
+        new transports.File({
+            level: 'warn',
+            filename: './logs/logsWarnings.log'
+        }),
+        new transports.File({
+            level: 'error',
+            filename: './logs/logsErrors.log'
+        }),
+        new transports.File({
+            level: 'info',
+            filename: './logs/logsInfo.log'
+        })
     ],
-    format: winston.format.combine(winston.format.colorize(), winston.format.json()),
-    defaultMeta: { service: 'user-service' },
-    // msg: 'this is a log{{req.method}}'
-});
+    format: format.combine(
+        format.timestamp(),
+        format.json(),
+        format.metadata()
+        //format.prettyPrint()
+    )
+})
 
-infoLogger.info('what time is it ?');
-
-module.exports = processRequest;
+module.exports = logger

@@ -4,7 +4,7 @@ const router = express.Router();
 const serviceSchema = require('../schemas/serviceSchema');
 const Service = new mongoose.model("Service", serviceSchema);
 
-
+const logger = require('../logger/logger');
 
 router.get("/", async (req, res) => {
     await Service.find({})
@@ -13,10 +13,12 @@ router.get("/", async (req, res) => {
         })
         .exec((err, data) => {
             if (err) {
+                logger.error(err.message);
                 res.status(500).json({
                     error: "There was a server side error!",
                 });
             } else {
+                logger.info(data);
                 res.status(200).json(
                     data
                 );
@@ -29,11 +31,13 @@ router.post('/', async (req, res) => {
     await newService.save((err) => {
 
         if (err) {
+            logger.error(err.message);
             res.status(500).json({
                 error: "There was a server side error",
             });
 
         } else {
+            logger.info("success");
             res.status(200).json({
                 message: "Service was inserted succesfully!",
             });
