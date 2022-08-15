@@ -28,7 +28,7 @@ function errorHandler(err, req, res, next) {
     res.staus(500).json({ error: err });
 }
 
-
+///
 app.use('', publicRouter);
 app.use('/services', serviceRouter);
 app.use('/orders', orderRouter);
