@@ -18,6 +18,7 @@ router.post('/', async (req, res) => {
             });
 
         } else {
+
             res.status(200).json({
                 message: "Cart was inserted succesfully!",
             });
@@ -43,7 +44,7 @@ router.get("/:email", async (req, res) => {
         });
 });
 router.delete("/:id", async (req, res) => {
-    await Cart.deleteOne({ _id: req.params.id })
+    await Cart.deleteOne({ id: req.params.id })
         .select({
             __v: 0
         })

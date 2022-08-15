@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const connectWithDb = require('./mongoConnector');
+const connectWithDb = require('./Connection/mongoConnector');
+const userRouter = require('./routeHandler/userRouter');
 const reviewRouter = require('./routeHandler/reviewRouter');
 const publicRouter = require('./routeHandler/publicRouters');
 const serviceRouter = require('./routeHandler/serviceRouter');
@@ -29,7 +30,9 @@ function errorHandler(err, req, res, next) {
 }
 
 ///
+
 app.use('', publicRouter);
+app.use('/users', userRouter);
 app.use('/services', serviceRouter);
 app.use('/orders', orderRouter);
 app.use('/carts', cartRouter);
