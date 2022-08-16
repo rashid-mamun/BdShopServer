@@ -4,6 +4,7 @@ const router = express.Router();
 const orderSchema = require('../schemas/orderSchema');
 const Order = new mongoose.model("Order", orderSchema);
 
+const { logger } = require('../logger/logger');
 
 router.post('/', async (req, res) => {
     const newOrder = new Order(req.body);
@@ -11,11 +12,13 @@ router.post('/', async (req, res) => {
     await newOrder.save((err) => {
 
         if (err) {
+            logger.error(err.message);
             res.status(500).json({
                 error: `There was a server side error ${err}`,
             });
 
         } else {
+            logger.info("Order was inserted succesfully!");
             res.status(200).json({
                 message: "Order was inserted succesfully!",
             });
@@ -30,10 +33,12 @@ router.get("/", async (req, res) => {
         })
         .exec((err, data) => {
             if (err) {
+                logger.error(err.message);
                 res.status(500).json({
                     error: `There was a server side error ${err}`,
                 });
             } else {
+                logger.info(data);
                 res.status(200).json(
                     data
                 );
@@ -48,10 +53,12 @@ router.get("/:email", async (req, res) => {
         })
         .exec((err, data) => {
             if (err) {
+                logger.error(err.message);
                 res.status(500).json({
                     error: `There was a server side error ${err}`,
                 });
             } else {
+                logger.info(data);
                 res.status(200).json(
                     data
                 );
@@ -73,10 +80,12 @@ router.put("/:id", async (req, res) => {
         })
         .exec((err, data) => {
             if (err) {
+                logger.error(err.message);
                 res.status(500).json({
                     error: `There was a server side error ${err}`,
                 });
             } else {
+                logger.info(data);
                 res.status(200).json(
                     data
                 );
@@ -92,10 +101,12 @@ router.delete("/:id", async (req, res) => {
         })
         .exec((err, data) => {
             if (err) {
+                logger.error(err.message);
                 res.status(500).json({
                     error: `There was a server side error ${err}`,
                 });
             } else {
+                logger.info(data);
                 res.status(200).json(
                     data
                 );

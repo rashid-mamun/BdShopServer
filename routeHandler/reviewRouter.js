@@ -4,7 +4,7 @@ const router = express.Router();
 const reviewSchema = require('../schemas/reviewSchema');
 const Review = new mongoose.model("Review", reviewSchema);
 
-
+const { logger } = require('../logger/logger');
 
 router.get("/", async (req, res) => {
     await Review.find({})
@@ -13,6 +13,7 @@ router.get("/", async (req, res) => {
         })
         .exec((err, data) => {
             if (err) {
+                logger.error(err.message);
                 res.status(500).json({
                     error: "There was a server side error!",
                 });
@@ -29,11 +30,13 @@ router.post('/', async (req, res) => {
     await newReview.save((err) => {
 
         if (err) {
+            logger.error(err.message);
             res.status(500).json({
                 error: "There was a server side error",
             });
 
         } else {
+            logger.info("Review was inserted succesfully!")
             res.status(200).json({
                 message: "Review was inserted succesfully!",
             });
@@ -46,6 +49,7 @@ router.post('/', async (req, res) => {
 router.post("/all", async (req, res) => {
     await Review.insertMany(req.body, (err) => {
         if (err) {
+            logger.error(err.message);
             res.status(500).json({
                 error: err.message,
             });

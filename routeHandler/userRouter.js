@@ -4,7 +4,7 @@ const router = express.Router();
 const userSchema = require('../schemas/userSchema');
 const User = new mongoose.model("User", userSchema);
 
-
+const { logger } = require('../logger/logger');
 
 
 router.get("/:email", async (req, res) => {
@@ -15,9 +15,11 @@ router.get("/:email", async (req, res) => {
         if (data[0]?.role === 'admin') {
             isAdmin = true;
         }
+        logger.info(data);
         res.json({ admin: isAdmin });
-        ///  res.status(200).json(data);
+
     } catch (err) {
+        logger.error(err.message);
         res.status(500).json({
             error: `There was a server side error! ${err}`,
         });
@@ -31,11 +33,13 @@ router.post('/', async (req, res) => {
     await newUser.save((err) => {
 
         if (err) {
+            logger.error(err.message);
             res.status(500).json({
                 error: "There was a server side error",
             });
 
         } else {
+            logger.info("User was inserted succesfully!");
             res.status(200).json({
                 message: "User was inserted succesfully!",
             });
@@ -52,12 +56,14 @@ router.put("/", async (req, res) => {
         const options = { upsert: true };
         const updateDoc = { $set: user };
         const result = await User.updateOne(filter, updateDoc, options);
-        console.log(result)
+
+        logger.info(result);
         res.status(200).json(
             result
         );
     }
     catch (err) {
+        logger.error(err.message);
         res.status(500).json({
             error: `There was a server side error! ${err}`,
         });
@@ -74,9 +80,11 @@ router.put('/admin', async (req, res) => {
 
         const updateDoc = { $set: { role: 'admin' } };
         const result = await User.updateOne(filter, updateDoc);
+        logger.info(result);
         res.json(result);
     }
     catch (err) {
+        logger.error(err.message);
         res.status(500).json({
             error: `There was a server side error! ${err}`,
         });

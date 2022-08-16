@@ -4,7 +4,7 @@ const router = express.Router();
 const serviceSchema = require('../schemas/serviceSchema');
 const Service = new mongoose.model("Service", serviceSchema);
 
-const logger = require('../logger/logger');
+const { logger } = require('../logger/logger');
 
 router.get("/", async (req, res) => {
     await Service.find({})
@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
                     error: "There was a server side error!",
                 });
             } else {
-                logger.info(data);
+                //logger.info(data);
                 res.status(200).json(
                     data
                 );
@@ -68,6 +68,7 @@ router.get("/:id", async (req, res) => {
         const data = await Service.find({ _id: req.params.id });
         res.status(200).json(data);
     } catch (err) {
+        logger.error(err.message);
         res.status(500).json({
             error: `There was a server side error! ${err}`,
         });
@@ -82,10 +83,12 @@ router.delete("/:id", async (req, res) => {
         })
         .exec((err, data) => {
             if (err) {
+                logger.error(err.message);
                 res.status(500).json({
                     error: "There was a server side error!",
                 });
             } else {
+                logger.info(data);
                 res.status(200).json(
                     data
                 );

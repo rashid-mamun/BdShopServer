@@ -7,7 +7,7 @@ const ourTeamSchema = require('../schemas/ourTeamSchema');
 const OurTeam = new mongoose.model("OurTeam", ourTeamSchema);
 
 
-
+const { logger } = require('../logger/logger');
 router.get('/', (req, res) => {
     return res.send('hello bro whatsup .');
 });
@@ -18,6 +18,7 @@ router.get("/ourteam", async (req, res) => {
         })
         .exec((err, data) => {
             if (err) {
+                logger.error(err.message);
                 res.status(500).json({
                     error: "There was a server side error!",
                 });
@@ -35,6 +36,7 @@ router.get("/blogs", async (req, res) => {
         })
         .exec((err, data) => {
             if (err) {
+                logger.error(err.message);
                 res.status(500).json({
                     error: "There was a server side error!",
                 });
@@ -51,6 +53,7 @@ router.post('/blogs', async (req, res) => {
     await newBlog.save((err) => {
 
         if (err) {
+            logger.error(err.message);
             res.status(500).json({
                 error: "There was a server side error",
             });
@@ -68,6 +71,7 @@ router.post('/blogs', async (req, res) => {
 router.post("/blogs/all", async (req, res) => {
     await Blog.insertMany(req.body, (err) => {
         if (err) {
+            logger.error(err.message);
             res.status(500).json({
                 error: err.message,
             });
